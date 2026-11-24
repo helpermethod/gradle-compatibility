@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gradle Compatibility Timeline</title>
+<meta name="description" content="Every point since Gradle 2.0 where Java or Kotlin support changed: Java to run Gradle, toolchains, embedded Kotlin and the Kotlin Gradle Plugin.">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme:light dark;
+  --bg:#f2f4f5;
+  --surface:#ffffff;
+  --surface-alt:#e9edee;
+  --border:#d6dcdf;
+  --text:#121a1f;
+  --muted:#56666d;
+  --accent:#0d7d78;
+  --accent-dark:#0a4f4c;
+  --row-hl:#dff3f1;
+  --shadow:0 1px 2px rgba(18,26,31,0.06), 0 8px 24px -16px rgba(18,26,31,0.25);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1517;
+    --surface:#161f22;
+    --surface-alt:#1c2629;
+    --border:#2b373b;
+    --text:#e8eef0;
+    --muted:#9bacb2;
+    --accent:#3fd0c4;
+    --accent-dark:#1c8f86;
+    --row-hl:rgba(63,208,196,0.14);
+    --shadow:0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -16px rgba(0,0,0,0.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1517;
+  --surface:#161f22;
+  --surface-alt:#1c2629;
+  --border:#2b373b;
+  --text:#e8eef0;
+  --muted:#9bacb2;
+  --accent:#3fd0c4;
+  --accent-dark:#1c8f86;
+  --row-hl:rgba(63,208,196,0.14);
+  --shadow:0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -16px rgba(0,0,0,0.6);
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  padding-inline:16px;
+  padding-block:32px;
+}
+.wrap{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:18px;}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums;}
+
+header.page{display:flex;flex-direction:column;gap:6px;}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--accent);
+  font-weight:600;
+}
+h1{
+  margin:0;
+  font-size:clamp(24px,5vw,30px);
+  line-height:1.15;
+  font-weight:600;
+  letter-spacing:-0.01em;
+  text-wrap:balance;
+}
+.sub{color:var(--muted);font-size:14.5px;max-width:65ch;line-height:1.5;margin:0;}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px;background:var(--surface);box-shadow:var(--shadow);}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:640px;}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:0.03em;background:var(--surface-alt);position:sticky;top:0;vertical-align:middle;}
+thead tr:first-child th{text-align:center;top:0;border-bottom:1px solid var(--border);}
+thead tr:first-child th[rowspan]{text-align:left;}
+thead tr.sub-row th{top:33px;font-size:11px;font-weight:500;text-transform:none;letter-spacing:0;}
+thead tr:first-child th:nth-child(3),
+thead tr:first-child th:nth-child(4){border-left:1px solid var(--border);}
+thead tr.sub-row th:nth-child(3),
+thead tr.sub-row th:nth-child(5){border-left:1px solid var(--border);}
+tbody td:nth-child(4),
+tbody td:nth-child(6){border-left:1px solid var(--border);}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:var(--row-hl);}
+
+footer{font-size:12.5px;color:var(--muted);text-align:center;padding-top:4px;}
+footer a{color:var(--accent-dark);}
+:root:not([data-theme="light"]) footer a{color:var(--accent);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <span class="eyebrow">Build tool compatibility</span>
+    <h1>Gradle Compatibility Timeline</h1>
+    <p class="sub">Every point since Gradle 2.0 where Java or Kotlin support changed — newest first.</p>
+  </header>
+
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="mono" rowspan="2">Since</th>
+          <th class="mono" colspan="2">Running Gradle</th>
+          <th class="mono" colspan="2">Build scripts — embedded Kotlin</th>
+          <th class="mono" colspan="2">Your code — Kotlin Gradle Plugin</th>
+        </tr>
+        <tr class="sub-row">
+          <th class="mono">Java to run Gradle</th>
+          <th class="mono">Java via toolchain</th>
+          <th class="mono">Kotlin version</th>
+          <th class="mono">Max Java it emits</th>
+          <th class="mono">Plugin version (KGP)</th>
+          <th class="mono">Max Java it emits</th>
+        </tr>
+      </thead>
+      <tbody id="timeline"></tbody>
+    </table>
+  </div>
+
+  <footer>
+    Data from <a href="https://docs.gradle.org/current/userguide/compatibility.html" target="_blank" rel="noopener">docs.gradle.org</a> and <a href="https://kotlinlang.org/docs/gradle-configure-project.html" target="_blank" rel="noopener">kotlinlang.org</a>, fetched 2026-11-23.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---- Source data ----
+  // runMax "x.y" means "supported up to and including all x.y.* patch releases"; null = open-ended ("and after").
+  // toolchainMin null = official table lists "N/A" (predates the toolchains feature); treated as available
+  // from 6.7 (when toolchains launched) since any JDK 8+ has always been a valid toolchain target since then.
+  var TOOLCHAIN_BASELINE = "6.7";
+  var javaTable = [
+    {java:8,  toolchainMin:null,   runMin:"2.0", runMax:"8.14"},
+    {java:9,  toolchainMin:null,   runMin:"4.3", runMax:"8.14"},
+    {java:10, toolchainMin:null,   runMin:"4.7", runMax:"8.14"},
+    {java:11, toolchainMin:null,   runMin:"5.0", runMax:"8.14"},
+    {java:12, toolchainMin:null,   runMin:"5.4", runMax:"8.14"},
+    {java:13, toolchainMin:null,   runMin:"6.0", runMax:"8.14"},
+    {java:14, toolchainMin:null,   runMin:"6.3", runMax:"8.14"},
+    {java:15, toolchainMin:"6.7",  runMin:"6.7", runMax:"8.14"},
+    {java:16, toolchainMin:"7.0",  runMin:"7.0", runMax:"8.14"},
+    {java:17, toolchainMin:"7.3",  runMin:"7.3", runMax:null},
+    {java:18, toolchainMin:"7.5",  runMin:"7.5", runMax:null},
+    {java:19, toolchainMin:"7.6",  runMin:"7.6", runMax:null},
+    {java:20, toolchainMin:"8.1",  runMin:"8.3", runMax:null},
+    {java:21, toolchainMin:"8.4",  runMin:"8.5", runMax:null},
+    {java:22, toolchainMin:"8.7",  runMin:"8.8", runMax:null},
+    {java:23, toolchainMin:"8.10", runMin:"8.10",runMax:null},
+    {java:24, toolchainMin:"8.14", runMin:"8.14",runMax:null},
+    {java:25, toolchainMin:"9.1.0",runMin:"9.1.0",runMax:null},
+    {java:26, toolchainMin:"9.4.0",runMin:"9.4.0",runMax:null},
+    {java:27, toolchainMin:"9.8.0",runMin:"9.8.0",runMax:null}
+  ];
+
+  // maxJvm: highest -jvm-target the Kotlin compiler accepts at that Kotlin version
+  // (i.e. the newest Java bytecode it can emit), per kotlinlang.org release notes.
+  var kotlinTable = [
+    {kotlin:"1.3.10", minGradle:"5.0", maxJvm:11},
+    {kotlin:"1.3.11", minGradle:"5.1", maxJvm:11},
+    {kotlin:"1.3.20", minGradle:"5.2", maxJvm:11},
+    {kotlin:"1.3.21", minGradle:"5.3", maxJvm:11},
+    {kotlin:"1.3.31", minGradle:"5.5", maxJvm:12},
+    {kotlin:"1.3.41", minGradle:"5.6", maxJvm:12},
+    {kotlin:"1.3.50", minGradle:"6.0", maxJvm:12},
+    {kotlin:"1.3.61", minGradle:"6.1", maxJvm:12},
+    {kotlin:"1.3.70", minGradle:"6.3", maxJvm:13},
+    {kotlin:"1.3.71", minGradle:"6.4", maxJvm:13},
+    {kotlin:"1.3.72", minGradle:"6.5", maxJvm:13},
+    {kotlin:"1.4.20", minGradle:"6.8", maxJvm:15},
+    {kotlin:"1.4.31", minGradle:"7.0", maxJvm:15},
+    {kotlin:"1.5.21", minGradle:"7.2", maxJvm:16},
+    {kotlin:"1.5.31", minGradle:"7.3", maxJvm:16},
+    {kotlin:"1.6.21", minGradle:"7.5", maxJvm:18},
+    {kotlin:"1.7.10", minGradle:"7.6", maxJvm:18},
+    {kotlin:"1.8.10", minGradle:"8.0", maxJvm:19},
+    {kotlin:"1.8.20", minGradle:"8.2", maxJvm:19},
+    {kotlin:"1.9.0",  minGradle:"8.3", maxJvm:20},
+    {kotlin:"1.9.10", minGradle:"8.4", maxJvm:20},
+    {kotlin:"1.9.20", minGradle:"8.5", maxJvm:21},
+    {kotlin:"1.9.22", minGradle:"8.7", maxJvm:21},
+    {kotlin:"1.9.23", minGradle:"8.9", maxJvm:21},
+    {kotlin:"1.9.24", minGradle:"8.10",maxJvm:21},
+    {kotlin:"2.0.20", minGradle:"8.11",maxJvm:22},
+    {kotlin:"2.0.21", minGradle:"8.12",maxJvm:22},
+    {kotlin:"2.2.0",  minGradle:"9.0.0",maxJvm:24},
+    {kotlin:"2.2.20", minGradle:"9.2.0",maxJvm:24},
+    {kotlin:"2.2.21", minGradle:"9.3.0",maxJvm:24},
+    {kotlin:"2.3.0",  minGradle:"9.4.0",maxJvm:25},
+    {kotlin:"2.3.20", minGradle:"9.5.0",maxJvm:25},
+    {kotlin:"2.3.21", minGradle:"9.6.0",maxJvm:25},
+    {kotlin:"2.4.0",  minGradle:"9.7.0",maxJvm:26},
+    {kotlin:"2.4.10", minGradle:"9.8.0",maxJvm:26},
+    {kotlin:"2.4.21", minGradle:"9.9.0",maxJvm:26}
+  ];
+
+  // Kotlin Gradle Plugin (KGP) <-> Gradle compatibility, from kotlinlang.org/docs/gradle-configure-project.html.
+  // kgpMax = newest KGP version in that row's range.
+  var kgpCompat = [
+    {kgpMax:"1.6.21", gMin:"6.1.1", gMax:"7.0.2"},
+    {kgpMax:"1.7.10", gMin:"6.7.1", gMax:"7.0.2"},
+    {kgpMax:"1.7.22", gMin:"6.7.1", gMax:"7.1.1"},
+    {kgpMax:"1.8.11", gMin:"6.8.3", gMax:"7.3.3"},
+    {kgpMax:"1.8.22", gMin:"6.8.3", gMax:"7.6.0"},
+    {kgpMax:"1.9.10", gMin:"6.8.3", gMax:"7.6.0"},
+    {kgpMax:"1.9.25", gMin:"6.8.3", gMax:"8.1.1"},
+    {kgpMax:"2.0.0",  gMin:"6.8.3", gMax:"8.5"},
+    {kgpMax:"2.0.21", gMin:"6.8.3", gMax:"8.8"},
+    {kgpMax:"2.1.10", gMin:"7.6.3", gMax:"8.10"},
+    {kgpMax:"2.1.21", gMin:"7.6.3", gMax:"8.12.1"},
+    {kgpMax:"2.2.10", gMin:"7.6.3", gMax:"8.14"},
+    {kgpMax:"2.2.21", gMin:"7.6.3", gMax:"8.14"},
+    {kgpMax:"2.3.10", gMin:"7.6.3", gMax:"9.0.0"},
+    {kgpMax:"2.3.21", gMin:"7.6.3", gMax:"9.3.0"},
+    {kgpMax:"2.4.10", gMin:"7.6.3", gMax:"9.5.0"},
+    {kgpMax:"2.4.21", gMin:"7.6.3", gMax:"9.7.0"}
+  ];
+  var FIRST_GRADLE = "2.0";
+
+  var kotlinJvmBreakpoints = [
+    {kotlin:"1.0.0",  maxJvm:8},
+    {kotlin:"1.3.0",  maxJvm:11},
+    {kotlin:"1.3.30", maxJvm:12},
+    {kotlin:"1.3.70", maxJvm:13},
+    {kotlin:"1.4.0",  maxJvm:14},
+    {kotlin:"1.4.20", maxJvm:15},
+    {kotlin:"1.5.0",  maxJvm:16},
+    {kotlin:"1.6.0",  maxJvm:17},
+    {kotlin:"1.6.20", maxJvm:18},
+    {kotlin:"1.8.0",  maxJvm:19},
+    {kotlin:"1.9.0",  maxJvm:20},
+    {kotlin:"1.9.20", maxJvm:21},
+    {kotlin:"2.0.0",  maxJvm:22},
+    {kotlin:"2.1.0",  maxJvm:23},
+    {kotlin:"2.2.0",  maxJvm:24},
+    {kotlin:"2.3.0",  maxJvm:25},
+    {kotlin:"2.4.0",  maxJvm:26}
+  ];
+
+  // ---- version helpers ----
+  function parts(v){ return String(v).split(".").map(function(n){ return parseInt(n,10) || 0; }); }
+  function cmp(a,b){
+    var pa=parts(a), pb=parts(b), n=Math.max(pa.length,pb.length);
+    for (var i=0;i<n;i++){ var x=pa[i]||0, y=pb[i]||0; if (x!==y) return x-y; }
+    return 0;
+  }
+  function cmpMM(a,b){
+    var pa=parts(a), pb=parts(b);
+    if ((pa[0]||0) !== (pb[0]||0)) return (pa[0]||0)-(pb[0]||0);
+    return (pa[1]||0)-(pb[1]||0);
+  }
+
+  function lookup(g){
+    var runRows = javaTable.filter(function(r){
+      return cmp(g,r.runMin) >= 0 && (r.runMax===null || cmpMM(g,r.runMax) <= 0);
+    });
+    var runJavaMin = null, runJavaMax = null;
+    runRows.forEach(function(r){
+      if (runJavaMin===null || r.java<runJavaMin) runJavaMin=r.java;
+      if (runJavaMax===null || r.java>runJavaMax) runJavaMax=r.java;
+    });
+
+    var tcRows = javaTable.filter(function(r){
+      var min = r.toolchainMin || TOOLCHAIN_BASELINE;
+      return cmp(g,min) >= 0;
+    });
+    var tcJavaMax = null;
+    tcRows.forEach(function(r){ if (tcJavaMax===null || r.java>tcJavaMax) tcJavaMax=r.java; });
+
+    var kEntry = null;
+    kotlinTable.forEach(function(k){
+      if (cmp(g,k.minGradle) >= 0) kEntry = k;
+    });
+
+    return {
+      runJavaMin: runJavaMin, runJavaMax: runJavaMax,
+      tcJavaMax: tcJavaMax, tcAvailable: cmp(g, TOOLCHAIN_BASELINE) >= 0,
+      kotlin: kEntry
+    };
+  }
+
+  function maxJvmFor(kotlinVersion){
+    var best = null;
+    kotlinJvmBreakpoints.forEach(function(b){ if (cmp(kotlinVersion,b.kotlin) >= 0) best = b.maxJvm; });
+    return best;
+  }
+
+  function lookupKgp(g){
+    var inRange = kgpCompat.filter(function(r){ return cmp(g,r.gMin) >= 0 && cmp(g,r.gMax) <= 0; });
+    var row = null, approx = false;
+    if (inRange.length){
+      inRange.forEach(function(r){ if (!row || cmp(r.kgpMax,row.kgpMax) > 0) row = r; });
+    } else {
+      var covered = kgpCompat.filter(function(r){ return cmp(g,r.gMin) >= 0; });
+      covered.forEach(function(r){ if (!row || cmp(r.kgpMax,row.kgpMax) > 0) row = r; });
+      approx = !!row;
+    }
+    if (!row) return null;
+    return { kgpMax: row.kgpMax, maxJvm: maxJvmFor(row.kgpMax), approx: approx };
+  }
+
+  function fmtJavaRange(r){
+    if (r.runJavaMin===null) return "—";
+    return r.runJavaMin===r.runJavaMax ? String(r.runJavaMax) : (r.runJavaMin+"–"+r.runJavaMax);
+  }
+
+  // ---- timeline (all change points, computed from the tables above) ----
+  var breakpoints = (function(){
+    var set = {};
+    function add(v){ if (v) set[v]=true; }
+    add(FIRST_GRADLE);
+    javaTable.forEach(function(r){ add(r.runMin); add(r.toolchainMin); });
+    kotlinTable.forEach(function(k){ add(k.minGradle); });
+    var list = Object.keys(set);
+    list.sort(cmp);
+    return list;
+  })();
+
+  var timelineEl = document.getElementById("timeline");
+  var descending = breakpoints.slice().reverse();
+  descending.forEach(function(bp){
+    var r = lookup(bp);
+    var kgp = lookupKgp(bp);
+    var tr = document.createElement("tr");
+    tr.innerHTML =
+      '<td class="mono">'+bp+'</td>'+
+      '<td class="mono">'+fmtJavaRange(r)+'</td>'+
+      '<td class="mono">'+(r.tcAvailable? "≤ "+r.tcJavaMax : "—")+'</td>'+
+      '<td class="mono">'+(r.kotlin? r.kotlin.kotlin : "—")+'</td>'+
+      '<td class="mono">'+(r.kotlin? ("≤ "+r.kotlin.maxJvm) : "—")+'</td>'+
+      '<td class="mono">'+(kgp? (kgp.kgpMax+(kgp.approx?"+":"")) : "—")+'</td>'+
+      '<td class="mono">'+(kgp? ("≤ "+kgp.maxJvm) : "—")+'</td>';
+    timelineEl.appendChild(tr);
+  });
+})();
+</script>
+</body>
+</html>
